@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score,silhouette_samples
@@ -9,6 +8,7 @@ import matplotlib.pyplot as plt
 import json
 from sklearn.decomposition import FactorAnalysis
 import joblib
+import numpy as np
 
 # Load the saved Linear Regression model
 model_path = 'linear_regression_model.pkl'
@@ -42,9 +42,13 @@ for feature in features_for_clustering:
     if feature not in df.columns:
         raise ValueError(f"Feature {feature} not found in the dataset")
 
-# Standardize the data for clustering
-scaler = StandardScaler()
-scaled_features = scaler.fit_transform(df[features_for_clustering])
+
+# Assuming df[features_for_clustering] contains your data
+your_data = df[features_for_clustering]
+
+mean = np.mean(your_data, axis=0)
+std_dev = np.std(your_data, axis=0)
+scaled_features = (your_data - mean) / std_dev
 
 # Perform K-Means clustering
 kmeans = KMeans(n_clusters=3, random_state=42)
