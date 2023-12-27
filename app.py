@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
@@ -23,9 +22,16 @@ scaler = joblib.load(scaler_path)
 file_path = 'cleaned_contact_information.csv'
 df = pd.read_csv(file_path)
 
-# Handle missing values
-imputer = SimpleImputer(strategy='mean')
-data_imputed = imputer.fit_transform(df)
+# Assume 'df' is your DataFrame with missing values
+
+# Calculate mean for each column with missing values
+mean_values = df.mean()
+
+# Fill missing values with mean for columns with numerical data types
+numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
+for col in numerical_cols:
+    df[col].fillna(mean_values[col], inplace=True)
+
 
 # Select features for clustering
 features_for_clustering = ['digital_comfort', 'emergency_access', 'govt_policy_awareness', 'safety_feeling',
